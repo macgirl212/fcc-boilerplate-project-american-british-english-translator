@@ -10,12 +10,16 @@ module.exports = function (app) {
 		const locale = req.body.locale;
 
 		// error messages
-		if (!text) {
+		if (text === '') {
 			return res.json({ error: 'No text to translate' });
 		}
 
 		if (locale !== 'american-to-british' && locale !== 'british-to-american') {
 			return res.json({ error: 'Invalid value for locale field' });
+		}
+
+		if (!text || !locale) {
+			return res.json({ error: 'Required field(s) missing' });
 		}
 
 		const translated = translator.translate(text, locale);

@@ -168,6 +168,11 @@ class Translator {
 		if (newMessage.match(/\d{1,2}:?.?\d{2}/)) {
 			newMessage = this.timeRegex(newMessage, locale);
 		}
+
+		// if there is no change, send a default message
+		if (textString === newMessage) {
+			return 'Everything looks good to me!';
+		}
 		return newMessage;
 	}
 }
