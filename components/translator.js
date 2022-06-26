@@ -52,7 +52,9 @@ class Translator {
 			// find all keys in object
 			for (const [key, value] of Object.entries(americanOnly)) {
 				// if a key matches any terms, replace it
-				if (textString.search(key) !== -1) {
+				const keyToCheck = `(?<![\\w-])${key}(?![\\w-])`;
+				const keyRegex = new RegExp(keyToCheck);
+				if (textString.search(keyRegex) !== -1) {
 					textString = textString.replace(
 						key,
 						`<span class="highlight">${value}</span>`
@@ -63,7 +65,9 @@ class Translator {
 		if (locale === 'british-to-american') {
 			for (const [key, value] of Object.entries(americanOnly)) {
 				// find all values in object
-				if (textString.search(value) !== -1) {
+				const valueToCheck = `(?<![\\w-])${value}(?![\\w-])`;
+				const valueRegex = new RegExp(valueToCheck);
+				if (textString.search(valueRegex) !== -1) {
 					// if a value matches any terms, replace it
 					textString = textString.replace(
 						value,
@@ -72,6 +76,7 @@ class Translator {
 				}
 			}
 		}
+
 		return textString;
 	}
 
@@ -80,7 +85,9 @@ class Translator {
 			// find all keys in object
 			for (const [key, value] of Object.entries(britishOnly)) {
 				// if a key matches any terms, replace it
-				if (textString.search(key) !== -1) {
+				const keyToCheck = `(?<![\\w-])${key}(?![\\w-])`;
+				const keyRegex = new RegExp(keyToCheck);
+				if (textString.search(keyRegex) !== -1) {
 					textString = textString.replace(
 						key,
 						`<span class="highlight">${value}</span>`
@@ -91,7 +98,9 @@ class Translator {
 		if (locale === 'american-to-british') {
 			for (const [key, value] of Object.entries(britishOnly)) {
 				// find all values in object
-				if (textString.search(value) !== -1) {
+				const valueToCheck = `(?<![\\w-])${value}(?![\\w-])`;
+				const valueRegex = new RegExp(valueToCheck);
+				if (textString.search(valueRegex) !== -1) {
 					// if a value matches any terms, replace it
 					textString = textString.replace(
 						value,
@@ -100,6 +109,7 @@ class Translator {
 				}
 			}
 		}
+
 		return textString;
 	}
 
@@ -108,7 +118,9 @@ class Translator {
 			// find all keys in object
 			for (const [key, value] of Object.entries(americanToBritishSpelling)) {
 				// if a key matches any terms, replace it
-				if (textString.search(key) !== -1) {
+				const keyToCheck = `(?<![\\w-])${key}(?![\\w-])`;
+				const keyRegex = new RegExp(keyToCheck);
+				if (textString.search(keyRegex) !== -1) {
 					textString = textString.replace(
 						key,
 						`<span class="highlight">${value}</span>`
@@ -119,7 +131,9 @@ class Translator {
 		if (locale === 'british-to-american') {
 			for (const [key, value] of Object.entries(americanToBritishSpelling)) {
 				// find all values in object
-				if (textString.search(value) !== -1) {
+				const valueToCheck = `(?<![\\w-])${value}(?![\\w-])`;
+				const valueRegex = new RegExp(valueToCheck);
+				if (textString.search(valueRegex) !== -1) {
 					// if a value matches any terms, replace it
 					textString = textString.replace(
 						value,
@@ -128,6 +142,7 @@ class Translator {
 				}
 			}
 		}
+
 		return textString;
 	}
 
@@ -160,8 +175,9 @@ class Translator {
 
 		// replace words based on categories
 		newMessage = this.replaceHonorifics(newMessage, locale);
-		newMessage = this.replaceAmericanTerms(newMessage, locale);
+		newMessage = newMessage.charAt(0).toLowerCase() + newMessage.slice(1);
 		newMessage = this.replaceBritishTerms(newMessage, locale);
+		newMessage = this.replaceAmericanTerms(newMessage, locale);
 		newMessage = this.replaceSpelling(newMessage, locale);
 
 		// check if string contains time
@@ -169,7 +185,11 @@ class Translator {
 			newMessage = this.timeRegex(newMessage, locale);
 		}
 
-		// if there is no change, send a default message
+		if (newMessage.charAt(0) !== '<') {
+			newMessage = newMessage.charAt(0).toUpperCase() + newMessage.slice(1);
+		}
+
+		// if there is no change, send a default
 		if (textString === newMessage) {
 			return 'Everything looks good to me!';
 		}
